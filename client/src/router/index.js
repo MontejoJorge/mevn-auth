@@ -38,8 +38,9 @@ router.beforeEach(async (to, from, next) => {
          if (hasRoles.length > 0) {
             next();
          } else {
-            const { roles } = await store.dispatch('auth/getInfo');
+            const { roles, username } = await store.dispatch('auth/getInfo');
             console.log('roles', roles);
+            console.log('username', username);
             next();
          }
       }

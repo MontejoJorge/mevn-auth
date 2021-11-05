@@ -22,27 +22,44 @@
 <script>
 import { mapActions } from 'vuex';
 
+const usernameRegex = new RegExp('^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$');
+const passwordRegex = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{6,20}$');
+
 export default {
    name: 'login-form',
    data() {
       return {
-         username: "montejojorge",
-         password: "Jm12345$",
-         errorMsg: null
+         username: null,
+         password: null,
+         errorMsg: null,
+         validFields: false
       };
    },
    methods: {
       ...mapActions('auth', ['login']),
       doLogin(e) {
-         const { username, password } = this;
-         this.login({ username, password })
-            .then(() => {
-               this.$router.push({ path: '/' });
-            })
-            .catch((err) => {
-               this.errorMsg = err.msg;
-            });
          e.preventDefault();
+         
+         this.validFields = this.checkFields();
+
+         if (this.validFields) {
+            const { username, password } = this;
+            this.login({ username, password })
+               .then(() => {
+                  this.$router.push({ path: '/' });
+               })
+               .catch((err) => {
+                  this.errorMsg = err.msg;
+               });
+         } else {
+            this.errorMsg = 'Invalid username or password.';
+         }
+      },
+      checkFields() {
+         return (
+            usernameRegex.test(this.username) &&
+            passwordRegex.test(this.password)
+         );
       },
    },
 };

@@ -17,7 +17,7 @@ const loginController = async (req = request, res = response) => {
             .json({ msg: 'Incorrect username or password.' });
       }
 
-      const passwordMatch = bcrypt.compare(password, user.password);
+      const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (user.active == false || !passwordMatch) {
          return res

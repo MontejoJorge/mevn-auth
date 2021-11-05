@@ -5,21 +5,22 @@ const authModule = {
    namespaced: true,
    state: {
       token: getToken(),
-      test: '',
       username: '',
       roles: [],
    },
    mutations: {
+      SET_TOKEN(state, token) {
+         state.token = token;
+      },
       logout(state) {
          state.token = null;
          state.username = null;
       },
-      loginSucces(state, {username, token}) {
-         state.token = token;
-         state.username = username;
-      },
-      setRoles(state, roles) {
+      SET_ROLES(state, roles) {
          state.roles = roles;
+      },
+      SET_USERNAME(state, username) {
+         state.username = username;
       },
    },
    actions: {
@@ -28,9 +29,9 @@ const authModule = {
             auth
                .login(username, password)
                .then(res => {
-                  const { username, token } = res;
+                  const { token } = res;
                   setToken(token);
-                  commit('loginSucces', { username, token });
+                  commit("SET_TOKEN", token);
                   resolve();
                })
                .catch(err => {
@@ -45,8 +46,9 @@ const authModule = {
       },
       async getInfo({ commit, state }) {
          const info = await auth.getInfo(state.token).then(res => {
-            const { roles } = res;
-            commit('setRoles', roles);
+            const { roles, username } = res;
+            commit('SET_ROLES', roles);
+            commit('SET_USERNAME', username);
             return { roles };
          });
          return info;

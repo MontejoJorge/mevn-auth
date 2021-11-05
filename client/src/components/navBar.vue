@@ -32,13 +32,24 @@
                      >About</router-link
                   >
                </li>
+            </ul>
+            <ul class="nav nav-bar ml-auto w-100 justify-content-end">
                <li class="nav-item">
                   <router-link
+                     v-if="!token"
                      to="/login"
                      class="nav-link"
                      active-class="active"
                      exact-active-class="active"
                      >Login</router-link
+                  >
+                  <router-link
+                     v-if="token"
+                     to="/login"
+                     class="nav-link"
+                     active-class="active"
+                     exact-active-class="active"
+                     >{{ username }}</router-link
                   >
                </li>
             </ul>
@@ -50,6 +61,14 @@
 <script>
 export default {
    name: 'nav-bar',
+   computed: {
+      token() {
+         return this.$store.state.auth.token;
+      },
+      username() {
+         return this.$store.state.auth.username;
+      },
+   },
 };
 </script>
 
