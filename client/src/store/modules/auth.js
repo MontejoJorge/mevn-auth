@@ -5,6 +5,7 @@ const authModule = {
    namespaced: true,
    state: {
       token: getToken(),
+      test: '',
       username: '',
       roles: [],
    },
@@ -13,7 +14,7 @@ const authModule = {
          state.token = null;
          state.username = null;
       },
-      loginSucces(state, username, token) {
+      loginSucces(state, {username, token}) {
          state.token = token;
          state.username = username;
       },
@@ -23,18 +24,20 @@ const authModule = {
    },
    actions: {
       login({ commit }, { username, password }) {
-         auth
-            .login(username, password)
-            .then(res => {
-               const { username, token } = res;
-               console.log(username, token);
-               setToken(token);
-               commit('loginSucces', { username, token });
-            })
-            .catch(err => {
-               const { error, msg } = err;
-               console.log(error, msg);
-            });
+         return new Promise((resolve, reject) => {
+            auth
+               .login(username, password)
+               .then(res => {
+                  const { username, token } = res;
+                  setToken(token);
+                  commit('loginSucces', { username, token });
+                  resolve();
+               })
+               .catch(err => {
+                  const { error, msg } = err;
+                  reject({ error, msg });
+               });
+         });
       },
       logout({ commit }) {
          commit('logout');

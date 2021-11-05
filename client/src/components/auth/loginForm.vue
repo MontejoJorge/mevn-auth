@@ -14,10 +14,8 @@
          id="password"
          v-model="password"
          placeholder="Password" /><br /><br />
-      <input
-         type="submit"
-         value="Login"
-         @click="doLogin" />
+      <p>{{ errorMsg }}</p>
+      <input type="submit" value="Login" @click="doLogin" />
    </form>
 </template>
 
@@ -28,17 +26,24 @@ export default {
    name: 'login-form',
    data() {
       return {
-         username: null,
-         password: null,
+         username: "montejojorge",
+         password: "Jm12345$",
+         errorMsg: null
       };
    },
    methods: {
       ...mapActions('auth', ['login']),
       doLogin(e) {
          const { username, password } = this;
-         this.login({ username, password });
+         this.login({ username, password })
+            .then(() => {
+               this.$router.push({ path: '/' });
+            })
+            .catch((err) => {
+               this.errorMsg = err.msg;
+            });
          e.preventDefault();
-      }
+      },
    },
 };
 </script>
